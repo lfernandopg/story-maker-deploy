@@ -1,0 +1,17 @@
+@import "tailwindcss";
+@import "plyr/dist/plyr.css";
+
+:root {
+  --plyr-color-main: #a855f7; /* púrpura Tailwind */
+}
+
+.plyr--audio .plyr__controls {
+  background: rgba(17, 17, 17, 0.9);
+  border-radius: 12px;
+  backdrop-filter: blur(6px);
+  padding: 8px 12px;
+}
+
+.plyr--full-ui input[type=range] {
+  color: #a855f7; /* acento púrpura */
+}
