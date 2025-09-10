@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Play, RotateCcw, Sparkles, BookOpen, Headphones, AlertCircle } from 'lucide-react';
-
 import SceneCard from './components/SceneCard';
 
 export default function App() {
@@ -70,6 +69,7 @@ export default function App() {
     try {
       // Paso 1: Generar historia con Gemini
       setLoadingStep('Generando historia con IA...');
+      
       const storyResponse = await fetch('/api/generate-story', {
         method: 'POST',
         headers: {
@@ -79,7 +79,8 @@ export default function App() {
       });
 
       if (!storyResponse.ok) {
-        throw new Error('Error generando historia');
+        const errorData = await storyResponse.json();
+        throw new Error(errorData.error || 'Error generando historia');
       }
 
       const storyData = await storyResponse.json();
@@ -97,7 +98,8 @@ export default function App() {
       });
 
       if (!imagesResponse.ok) {
-        throw new Error('Error generando imágenes');
+        const errorData = await imagesResponse.json();
+        throw new Error(errorData.error || 'Error generando imágenes');
       }
 
       const imagesData = await imagesResponse.json();
@@ -115,7 +117,8 @@ export default function App() {
       });
 
       if (!audioResponse.ok) {
-        throw new Error('Error generando audios');
+        const errorData = await audioResponse.json();
+        throw new Error(errorData.error || 'Error generando audios');
       }
 
       const audioData = await audioResponse.json();
@@ -133,7 +136,7 @@ export default function App() {
 
     } catch (error) {
       console.error('Error en generación:', error);
-      setError('Hubo un problema generando tu historia. Por favor intenta de nuevo.');
+      setError(error.message || 'Hubo un problema generando tu historia. Por favor intenta de nuevo.');
     } finally {
       setLoading(false);
       setLoadingStep('');
