@@ -171,11 +171,13 @@ export default function App() {
   const onLoadedMetadata = () => setDuration(audioRef.current.duration);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-purple-950/20 to-gray-950 flex flex-col items-center justify-center text-white font-sans p-6 relative overflow-hidden">
-      {/* Efectos de fondo animados */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(147,51,234,0.1),transparent_50%)] animate-pulse-slow" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(236,72,153,0.1),transparent_50%)] animate-pulse-slow" style={{ animationDelay: '1s' }} />
-      
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black flex flex-col items-center justify-center text-white font-sans p-6 relative overflow-hidden">
+      {/* Efectos de fondo animados estilo cine */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(30,30,30,0.8),transparent_70%)] animate-pulse-slow" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(20,20,20,0.6),transparent_60%)] animate-pulse-slow" style={{ animationDelay: '1s' }} />
+      <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_40%,rgba(40,40,40,0.1)_50%,transparent_60%)]" />
+      <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-black/80 to-transparent" />
+      <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-t from-black/80 to-transparent" />
       <audio 
         ref={audioRef} 
         onTimeUpdate={onTimeUpdate} 
