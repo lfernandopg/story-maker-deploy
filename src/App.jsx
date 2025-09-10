@@ -539,7 +539,7 @@ export default function App() {
                 <Github size={20} />
               </a>
               <a 
-                href="https://linkedin.com/in/lfernandopg" 
+                href="https://www.linkedin.com/in/luiferpena/" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="p-2 text-gray-400 hover:text-purple-400 transition-colors duration-300 hover:scale-110"
@@ -548,7 +548,7 @@ export default function App() {
                 <Linkedin size={20} />
               </a>
               <a 
-                href="mailto:lfernandopg@gmail.com"
+                href="mailto:lfernandopg26@gmail.com"
                 className="p-2 text-gray-400 hover:text-purple-400 transition-colors duration-300 hover:scale-110"
                 aria-label={t('contact')}
               >
@@ -559,7 +559,7 @@ export default function App() {
           
           <div className="mt-4 pt-4 border-t border-gray-800/50 text-center">
             <p className="text-gray-500 text-xs">
-              © 2025 StoryForge AI. {t('footerRights')}.
+              © 2025 {t('appTitle')}. {t('footerRights')}.
             </p>
           </div>
         </div>

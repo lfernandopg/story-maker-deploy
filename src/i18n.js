@@ -2,7 +2,7 @@
 export const translations = {
   es: {
     // Header
-    appTitle: "StoryForge AI",
+    appTitle: "StoryMaker AI",
     appSubtitle: "Genera historias inmersivas con narración e imágenes",
     
     // Navigation
@@ -49,8 +49,8 @@ export const translations = {
     english: "English",
     
     // About section
-    aboutTitle: "Acerca de StoryForge AI",
-    aboutDescription: "StoryForge AI es una aplicación innovadora que combina inteligencia artificial de vanguardia para crear experiencias narrativas inmersivas y personalizadas.",
+    aboutTitle: "Acerca de StoryMaker AI",
+    aboutDescription: "StoryMaker AI es una aplicación innovadora que combina inteligencia artificial de vanguardia para crear experiencias narrativas inmersivas y personalizadas.",
     aboutFeatures: "Características principales:",
     feature1: "Generación de historias usando Google Gemini AI",
     feature2: "Creación de imágenes cinematográficas con IA",
@@ -80,7 +80,7 @@ export const translations = {
   
   en: {
     // Header
-    appTitle: "StoryForge AI",
+    appTitle: "StoryMaker AI",
     appSubtitle: "Generate immersive stories with narration and images",
     
     // Navigation
@@ -127,8 +127,8 @@ export const translations = {
     english: "English",
     
     // About section
-    aboutTitle: "About StoryForge AI",
-    aboutDescription: "StoryForge AI is an innovative application that combines cutting-edge artificial intelligence to create immersive and personalized narrative experiences.",
+    aboutTitle: "About StoryMaker AI",
+    aboutDescription: "StoryMaker AI is an innovative application that combines cutting-edge artificial intelligence to create immersive and personalized narrative experiences.",
     aboutFeatures: "Key Features:",
     feature1: "Story generation using Google Gemini AI",
     feature2: "Cinematic image creation with AI",
