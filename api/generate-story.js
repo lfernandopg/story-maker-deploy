@@ -8,19 +8,23 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { genre, description } = req.body;
+    const { genre, description, language } = req.body;
 
     if (!genre || !description) {
-      return res.status(400).json({ error: 'Género y descripción son requeridos' });
+      return res.status(400).json({ error: language === "es" 
+        ? 'Género y descripción son requeridos' 
+        : 'Genre and description are required' 
+      });
     }
 
-    console.log(`🎭 Generando historia de género: ${genre}`);
+    console.log(`🎭 Generando historia (${language}) de género: ${genre}`);
 
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-    const prompt = `
-    Eres un escritor experto en ${genre}. Crea una historia basada en: "${description}"
+    // Prompt en inglés o español según language
+    const promptES = `
+    Eres un escritor experto en ${genre}. Crea una historia en español basada en: "${description}"
 
     IMPORTANTE: Responde ÚNICAMENTE con un JSON válido en este formato exacto:
     {
@@ -29,9 +33,9 @@ export default async function handler(req, res) {
         {
           "id": 1,
           "title": "Título de la escena",
-          "text": "Narración de la escena (máximo 150 palabras)",
+          "text": "Narración de la escena (máximo 150 palabras, en español)",
           "imagePrompt": "Descripción detallada en inglés para generar imagen (máximo 100 palabras, muy visual y específica)",
-          "audioText": "Texto para narración en audio, más dramático y expresivo"
+          "audioText": "Texto para narración en audio (español), más dramático y expresivo"
         }
       ]
     }
@@ -42,10 +46,34 @@ export default async function handler(req, res) {
     - Clímax
     - Resolución
     - Epílogo
-
-    Las descripciones de imágenes deben ser muy específicas, visuales y en inglés.
-    El texto de audio debe ser más dramático y expresivo para la narración.
     `;
+
+    const promptEN = `
+    You are an expert writer in ${genre}. Create a story in English based on: "${description}"
+
+    IMPORTANT: Respond ONLY with a valid JSON in this exact format:
+    {
+      "title": "Main title of the story",
+      "scenes": [
+        {
+          "id": 1,
+          "title": "Scene title",
+          "text": "Scene narration (maximum 150 words, in English)",
+          "imagePrompt": "Detailed description in English for image generation (max 100 words, very visual and specific)",
+          "audioText": "Text for audio narration (English), more dramatic and expressive"
+        }
+      ]
+    }
+
+    Generate exactly 5 scenes that form a complete story with:
+    - Introduction
+    - Conflict development
+    - Climax
+    - Resolution
+    - Epilogue
+    `;
+
+    const prompt = language === "en" ? promptEN : promptES;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
@@ -54,17 +82,23 @@ export default async function handler(req, res) {
     // Limpiar la respuesta para obtener solo el JSON
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
-      throw new Error('No se pudo extraer JSON válido de la respuesta');
+      throw new Error(language === "es" 
+        ? 'No se pudo extraer JSON válido de la respuesta' 
+        : 'Could not extract valid JSON from response'
+      );
     }
 
     const storyData = JSON.parse(jsonMatch[0]);
 
     // Validar estructura
     if (!storyData.scenes || !Array.isArray(storyData.scenes)) {
-      throw new Error('Estructura de respuesta inválida');
+      throw new Error(language === "es" 
+        ? 'Estructura de respuesta inválida' 
+        : 'Invalid response structure'
+      );
     }
 
-    console.log(`✅ Historia generada exitosamente`);
+    console.log(`✅ Historia generada exitosamente (${language})`);
 
     // Responder con la historia
     res.status(200).json({
@@ -72,7 +106,8 @@ export default async function handler(req, res) {
       metadata: {
         createdAt: new Date().toISOString(),
         genre,
-        description
+        description,
+        language
       }
     });
 
