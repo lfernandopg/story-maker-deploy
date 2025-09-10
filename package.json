@@ -10,9 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@google/genai": "^0.3.2",
+    "@google/genai": "^1.19.0",
     "@aws-sdk/client-polly": "^3.658.1",
-    "@google/generative-ai": "^1.19.0",
+    "@google/generative-ai": "^0.24.1",
     "@tailwindcss/vite": "^4.1.13",
     "lucide-react": "^0.542.0",
     "next": "^15.5.2",
