@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Play, RotateCcw, Sparkles, BookOpen, Headphones, AlertCircle, Globe, ChevronDown } from 'lucide-react';
+import { Play, RotateCcw, Sparkles, BookOpen, Headphones, AlertCircle, Globe, ChevronDown, Github, Linkedin, Mail, ArrowLeft, Zap, Palette, Mic, Smartphone, Languages, Code, Layers, User, Lightbulb, Rocket } from 'lucide-react';
 import SceneCard from './components/SceneCard';
 import { useTranslation } from './i18n';
 
@@ -10,6 +10,7 @@ export default function App() {
   );
   const { t } = useTranslation(language);
   
+  const [currentView, setCurrentView] = useState('home'); // 'home' | 'about'
   const [genre, setGenre] = useState('');
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
@@ -76,6 +77,7 @@ export default function App() {
     setGenre('');
     setDescription('');
     setError('');
+    setCurrentView('home');
   };
 
   useEffect(() => {
@@ -207,8 +209,123 @@ export default function App() {
   const onTimeUpdate = () => setProgress(audioRef.current.currentTime);
   const onLoadedMetadata = () => setDuration(audioRef.current.duration);
 
+  const renderAboutSection = () => (
+    <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 animate-fade-in">
+      <div className="bg-gray-900/80 backdrop-blur-xl rounded-2xl p-6 sm:p-8 shadow-2xl border border-purple-500/20">
+        {/* Header */}
+        <div className="flex items-center gap-4 mb-6">
+          <button
+            onClick={() => setCurrentView('home')}
+            className="flex items-center gap-2 px-4 py-2 bg-gray-800/60 hover:bg-gray-700/60 rounded-xl transition-all duration-300 text-gray-300 hover:text-white"
+          >
+            <ArrowLeft size={16} />
+            <span className="text-sm">{t('home')}</span>
+          </button>
+          <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            {t('aboutTitle')}
+          </h1>
+        </div>
+
+        {/* Description */}
+        <p className="text-gray-300 text-base sm:text-lg leading-relaxed mb-8">
+          {t('aboutDescription')}
+        </p>
+
+        {/* Features */}
+        <div className="grid md:grid-cols-2 gap-8 mb-8">
+          <div>
+            <h3 className="text-xl font-semibold text-purple-300 mb-4 flex items-center gap-2">
+              <Zap size={20} />
+              {t('aboutFeatures')}
+            </h3>
+            <ul className="space-y-3">
+              {[
+                { icon: <Sparkles size={16} />, text: t('feature1') },
+                { icon: <Palette size={16} />, text: t('feature2') },
+                { icon: <Mic size={16} />, text: t('feature3') },
+                { icon: <Smartphone size={16} />, text: t('feature4') },
+                { icon: <Languages size={16} />, text: t('feature5') }
+              ].map((feature, index) => (
+                <li key={index} className="flex items-start gap-3 text-gray-400">
+                  <span className="text-purple-400 mt-1">{feature.icon}</span>
+                  <span className="text-sm sm:text-base">{feature.text}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="text-xl font-semibold text-pink-300 mb-4 flex items-center gap-2">
+              <Code size={20} />
+              {t('aboutTech')}
+            </h3>
+            <ul className="space-y-3">
+              {[
+                { icon: <Layers size={16} />, text: t('tech1') },
+                { icon: <Palette size={16} />, text: t('tech2') },
+                { icon: <Rocket size={16} />, text: t('tech3') },
+                { icon: <Mic size={16} />, text: t('tech4') },
+                { icon: <Lightbulb size={16} />, text: t('tech5') }
+              ].map((tech, index) => (
+                <li key={index} className="flex items-start gap-3 text-gray-400">
+                  <span className="text-pink-400 mt-1">{tech.icon}</span>
+                  <span className="text-sm sm:text-base">{tech.text}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Portfolio Skills */}
+        <div className="bg-gradient-to-r from-purple-900/20 to-pink-900/20 rounded-xl p-6 border border-purple-500/20">
+          <h3 className="text-xl font-semibold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text mb-4 flex items-center gap-2">
+            <User size={20} />
+            {t('aboutPortfolio')}
+          </h3>
+          <div className="grid sm:grid-cols-2 gap-4">
+            {[
+              t('skill1'),
+              t('skill2'),
+              t('skill3'),
+              t('skill4'),
+              t('skill5')
+            ].map((skill, index) => (
+              <div key={index} className="flex items-start gap-3">
+                <div className="w-2 h-2 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 mt-2"></div>
+                <span className="text-gray-300 text-sm sm:text-base">{skill}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderLoadingScreen = () => (
+    <div className="flex flex-col items-center justify-center space-y-6 animate-fade-in px-4">
+      <div className="relative">
+        <div className="w-16 sm:w-20 h-16 sm:h-20 border-4 border-purple-500/30 border-t-purple-400 rounded-full animate-spin" />
+        <div className="absolute inset-0 w-16 sm:w-20 h-16 sm:h-20 border-4 border-pink-500/30 border-b-pink-400 rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
+      </div>
+      
+      <div className="text-center space-y-4 max-w-md">
+        <p className="text-lg sm:text-xl font-semibold text-purple-300 animate-pulse">
+          ✨ {loadingStep}
+        </p>
+        <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 border border-purple-500/20">
+          <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
+            {t('loadingMessage')}
+          </p>
+          <p className="text-purple-400 text-xs sm:text-sm mt-2">
+            {t('pleaseWait')}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black flex flex-col items-center justify-center text-white font-sans p-3 sm:p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black flex flex-col text-white font-sans relative overflow-hidden">
       {/* Efectos de fondo animados estilo cine */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(30,30,30,0.8),transparent_70%)] animate-pulse-slow" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(20,20,20,0.6),transparent_60%)] animate-pulse-slow" style={{ animationDelay: '1s' }} />
@@ -216,8 +333,24 @@ export default function App() {
       <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-black/80 to-transparent" />
       <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-t from-black/80 to-transparent" />
       
-      {/* Selector de idioma */}
-      <div className="absolute top-4 right-4 z-50">
+      {/* Navigation */}
+      <nav className="absolute top-4 left-4 right-4 z-50 flex justify-between items-center">
+        <div className="flex gap-2">
+          <button
+            onClick={() => setCurrentView('home')}
+            className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${currentView === 'home' ? 'bg-purple-600/20 text-purple-300 border border-purple-500/30' : 'text-gray-400 hover:text-white hover:bg-gray-800/60'}`}
+          >
+            {t('home')}
+          </button>
+          <button
+            onClick={() => setCurrentView('about')}
+            className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${currentView === 'about' ? 'bg-purple-600/20 text-purple-300 border border-purple-500/30' : 'text-gray-400 hover:text-white hover:bg-gray-800/60'}`}
+          >
+            {t('about')}
+          </button>
+        </div>
+
+        {/* Selector de idioma */}
         <div className="relative">
           <button
             onClick={() => setShowLanguageSelector(!showLanguageSelector)}
@@ -250,7 +383,7 @@ export default function App() {
             </div>
           )}
         </div>
-      </div>
+      </nav>
       
       <audio 
         ref={audioRef} 
@@ -260,142 +393,177 @@ export default function App() {
         muted={isMuted}
       />
 
-      {!storyReady ? (
-        <div className="relative z-10 w-full max-w-sm sm:max-w-lg">
-          <div className="bg-gray-900/80 backdrop-blur-xl rounded-2xl p-6 sm:p-8 shadow-2xl border border-purple-500/20 animate-fade-in">
-            <div className="text-center mb-6 sm:mb-8">
-              <div className="inline-flex items-center gap-2 sm:gap-3 mb-4">
-                <Sparkles className="text-purple-400 animate-pulse" size={isMobile ? 24 : 32} />
-                <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                  {t('appTitle')}
-                </h1>
-                <BookOpen className="text-pink-400 animate-pulse" size={isMobile ? 24 : 32} />
+      {/* Main Content */}
+      <main className="flex-grow flex items-center justify-center p-3 sm:p-6 pt-20">
+        {currentView === 'about' ? (
+          renderAboutSection()
+        ) : loading ? (
+          renderLoadingScreen()
+        ) : !storyReady ? (
+          <div className="relative z-10 w-full max-w-sm sm:max-w-lg">
+            <div className="bg-gray-900/80 backdrop-blur-xl rounded-2xl p-6 sm:p-8 shadow-2xl border border-purple-500/20 animate-fade-in">
+              <div className="text-center mb-6 sm:mb-8">
+                <div className="inline-flex items-center gap-2 sm:gap-3 mb-4">
+                  <Sparkles className="text-purple-400 animate-pulse" size={isMobile ? 24 : 32} />
+                  <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                    {t('appTitle')}
+                  </h1>
+                  <BookOpen className="text-pink-400 animate-pulse" size={isMobile ? 24 : 32} />
+                </div>
+                <p className="text-gray-400 text-sm">{t('appSubtitle')}</p>
               </div>
-              <p className="text-gray-400 text-sm">{t('appSubtitle')}</p>
+              
+              {error && (
+                <div className="mb-6 p-4 bg-red-900/20 border border-red-500/30 rounded-xl flex items-start gap-3">
+                  <AlertCircle className="text-red-400 flex-shrink-0 mt-0.5" size={20} />
+                  <p className="text-red-300 text-sm">{error}</p>
+                </div>
+              )}
+              
+              <div className="space-y-4 sm:space-y-6">
+                <div>
+                  <label className="block text-purple-200 font-semibold mb-2 flex items-center gap-2 text-sm sm:text-base">
+                    <Sparkles size={16} />
+                    {t('genre')}
+                  </label>
+                  <input 
+                    type="text" 
+                    value={genre} 
+                    onChange={(e) => setGenre(e.target.value)}
+                    disabled={loading}
+                    className="w-full p-3 sm:p-4 rounded-xl bg-gray-800/80 border border-purple-500/30 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-white placeholder-gray-400 backdrop-blur-sm disabled:opacity-50 text-sm sm:text-base" 
+                    placeholder={t('genrePlaceholder')}
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-purple-200 font-semibold mb-2 flex items-center gap-2 text-sm sm:text-base">
+                    <BookOpen size={16} />
+                    {t('description')}
+                  </label>
+                  <textarea 
+                    value={description} 
+                    onChange={(e) => setDescription(e.target.value)}
+                    disabled={loading}
+                    className="w-full p-3 sm:p-4 rounded-xl bg-gray-800/80 border border-purple-500/30 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-white placeholder-gray-400 backdrop-blur-sm min-h-[100px] sm:min-h-[120px] resize-none disabled:opacity-50 text-sm sm:text-base" 
+                    placeholder={t('descriptionPlaceholder')}
+                  />
+                </div>
+                
+                <button 
+                  onClick={handleGenerate}
+                  disabled={loading || !genre || !description}
+                  className={`w-full py-3 sm:py-4 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 transition-all duration-300 font-semibold text-base sm:text-lg disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-purple-500/25 flex items-center justify-center gap-3 ${isMobile ? 'active:scale-95' : ''}`}
+                >
+                  <Sparkles size={20} />
+                  {t('generateStory')}
+                </button>
+              </div>
             </div>
-            
-            {error && (
-              <div className="mb-6 p-4 bg-red-900/20 border border-red-500/30 rounded-xl flex items-start gap-3">
-                <AlertCircle className="text-red-400 flex-shrink-0 mt-0.5" size={20} />
-                <p className="text-red-300 text-sm">{error}</p>
+          </div>
+        ) : (
+          <div className="relative z-10 w-full animate-fade-in">
+            {autoplayBlocked && !isPlaying && (
+              <div className="mb-6 sm:mb-8 text-center bg-gray-800/80 backdrop-blur-xl p-4 sm:p-6 rounded-2xl border border-purple-500/20 animate-bounce-in mx-4 sm:mx-0">
+                <div className="flex items-center justify-center gap-3 mb-4">
+                  <Headphones className="text-purple-400" size={isMobile ? 20 : 24} />
+                  <p className="text-base sm:text-lg">{t('adventureReady')}</p>
+                </div>
+                <button 
+                  onClick={handleStartStory} 
+                  className={`px-6 sm:px-8 py-2 sm:py-3 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 transition-all duration-300 text-base sm:text-lg font-semibold flex items-center gap-3 mx-auto hover:shadow-lg hover:shadow-green-500/25 ${isMobile ? 'active:scale-95' : ''}`}
+                >
+                  <Play size={18} />
+                  {t('startStory')}
+                </button>
               </div>
             )}
+
+            {scenes[current] && (
+              <SceneCard
+                scene={scenes[current]}
+                isPlaying={isPlaying}
+                onPlayPause={handlePlayPause}
+                progress={progress}
+                duration={duration}
+                onSeek={handleSeek}
+                onNext={nextScene}
+                onPrev={prevScene}
+                isFirst={current === 0}
+                isLast={current === scenes.length - 1}
+                isMuted={isMuted}
+                onToggleMute={toggleMute}
+                isMobile={isMobile}
+                t={t}
+              />
+            )}
+
+            {/* Información y controles adicionales */}
+            <div className="mt-6 sm:mt-8 text-center space-y-4 px-4 sm:px-0">
+              <div className="flex items-center justify-center gap-2 sm:gap-4 flex-wrap">
+                <span className="px-3 sm:px-4 py-1 sm:py-2 bg-purple-600/20 rounded-full text-purple-200 font-semibold border border-purple-500/30 text-sm sm:text-base">
+                  {t('scene')} {current + 1} {t('of')} {scenes.length}
+                </span>
+                <button
+                  onClick={resetStory}
+                  className={`px-3 sm:px-4 py-1 sm:py-2 bg-gray-600/20 hover:bg-gray-500/30 rounded-full text-gray-300 hover:text-white transition-all duration-300 flex items-center gap-2 border border-gray-500/30 text-sm sm:text-base ${isMobile ? 'active:scale-95' : ''}`}
+                >
+                  <RotateCcw size={14} />
+                  {t('newStory')}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
+
+      {/* Footer */}
+      <footer className="relative z-10 border-t border-gray-800/50 bg-black/20 backdrop-blur-sm">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="text-center sm:text-left">
+              <p className="text-gray-400 text-sm">
+                {t('footerText')} <span className="text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text font-semibold">Luis Fernando</span>
+              </p>
+              <p className="text-gray-500 text-xs mt-1">{t('footerSubtext')}</p>
+            </div>
             
-            <div className="space-y-4 sm:space-y-6">
-              <div>
-                <label className="block text-purple-200 font-semibold mb-2 flex items-center gap-2 text-sm sm:text-base">
-                  <Sparkles size={16} />
-                  {t('genre')}
-                </label>
-                <input 
-                  type="text" 
-                  value={genre} 
-                  onChange={(e) => setGenre(e.target.value)}
-                  disabled={loading}
-                  className="w-full p-3 sm:p-4 rounded-xl bg-gray-800/80 border border-purple-500/30 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-white placeholder-gray-400 backdrop-blur-sm disabled:opacity-50 text-sm sm:text-base" 
-                  placeholder={t('genrePlaceholder')}
-                />
-              </div>
-              
-              <div>
-                <label className="block text-purple-200 font-semibold mb-2 flex items-center gap-2 text-sm sm:text-base">
-                  <BookOpen size={16} />
-                  {t('description')}
-                </label>
-                <textarea 
-                  value={description} 
-                  onChange={(e) => setDescription(e.target.value)}
-                  disabled={loading}
-                  className="w-full p-3 sm:p-4 rounded-xl bg-gray-800/80 border border-purple-500/30 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-white placeholder-gray-400 backdrop-blur-sm min-h-[100px] sm:min-h-[120px] resize-none disabled:opacity-50 text-sm sm:text-base" 
-                  placeholder={t('descriptionPlaceholder')}
-                />
-              </div>
-              
-              <button 
-                onClick={handleGenerate}
-                disabled={loading || !genre || !description}
-                className={`w-full py-3 sm:py-4 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 transition-all duration-300 font-semibold text-base sm:text-lg disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-purple-500/25 flex items-center justify-center gap-3 ${isMobile ? 'active:scale-95' : ''}`}
+            <div className="flex items-center gap-4">
+              <a 
+                href="https://github.com/lfernandopg" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="p-2 text-gray-400 hover:text-purple-400 transition-colors duration-300 hover:scale-110"
+                aria-label="GitHub"
               >
-                {loading ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    <span className="text-sm sm:text-base">{loadingStep || t('creatingMagic')}</span>
-                  </>
-                ) : (
-                  <>
-                    <Sparkles size={20} />
-                    {t('generateStory')}
-                  </>
-                )}
-              </button>
+                <Github size={20} />
+              </a>
+              <a 
+                href="https://linkedin.com/in/lfernandopg" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="p-2 text-gray-400 hover:text-purple-400 transition-colors duration-300 hover:scale-110"
+                aria-label="LinkedIn"
+              >
+                <Linkedin size={20} />
+              </a>
+              <a 
+                href="mailto:lfernandopg@gmail.com"
+                className="p-2 text-gray-400 hover:text-purple-400 transition-colors duration-300 hover:scale-110"
+                aria-label={t('contact')}
+              >
+                <Mail size={20} />
+              </a>
             </div>
           </div>
-        </div>
-      ) : loading ? (
-        <div className="flex flex-col items-center justify-center space-y-6 animate-fade-in">
-          <div className="relative">
-            <div className="w-16 sm:w-20 h-16 sm:h-20 border-4 border-purple-500/30 border-t-purple-400 rounded-full animate-spin" />
-            <div className="absolute inset-0 w-16 sm:w-20 h-16 sm:h-20 border-4 border-pink-500/30 border-b-pink-400 rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
-          </div>
-          <div className="text-center space-y-2 px-4">
-            <p className="text-lg sm:text-xl font-semibold text-purple-300 animate-pulse">✨ {loadingStep}</p>
-            <p className="text-gray-400 text-sm sm:text-base">{t('loadingMessage')}</p>
+          
+          <div className="mt-4 pt-4 border-t border-gray-800/50 text-center">
+            <p className="text-gray-500 text-xs">
+              © 2025 StoryForge AI. {t('footerRights')}.
+            </p>
           </div>
         </div>
-      ) : (
-        <div className="relative z-10 w-full animate-fade-in">
-          {autoplayBlocked && !isPlaying && (
-            <div className="mb-6 sm:mb-8 text-center bg-gray-800/80 backdrop-blur-xl p-4 sm:p-6 rounded-2xl border border-purple-500/20 animate-bounce-in mx-4 sm:mx-0">
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <Headphones className="text-purple-400" size={isMobile ? 20 : 24} />
-                <p className="text-base sm:text-lg">{t('adventureReady')}</p>
-              </div>
-              <button 
-                onClick={handleStartStory} 
-                className={`px-6 sm:px-8 py-2 sm:py-3 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 transition-all duration-300 text-base sm:text-lg font-semibold flex items-center gap-3 mx-auto hover:shadow-lg hover:shadow-green-500/25 ${isMobile ? 'active:scale-95' : ''}`}
-              >
-                <Play size={18} />
-                {t('startStory')}
-              </button>
-            </div>
-          )}
-
-          {scenes[current] && (
-            <SceneCard
-              scene={scenes[current]}
-              isPlaying={isPlaying}
-              onPlayPause={handlePlayPause}
-              progress={progress}
-              duration={duration}
-              onSeek={handleSeek}
-              onNext={nextScene}
-              onPrev={prevScene}
-              isFirst={current === 0}
-              isLast={current === scenes.length - 1}
-              isMuted={isMuted}
-              onToggleMute={toggleMute}
-              isMobile={isMobile}
-              t={t}
-            />
-          )}
-
-          {/* Información y controles adicionales */}
-          <div className="mt-6 sm:mt-8 text-center space-y-4 px-4 sm:px-0">
-            <div className="flex items-center justify-center gap-2 sm:gap-4 flex-wrap">
-              <span className="px-3 sm:px-4 py-1 sm:py-2 bg-purple-600/20 rounded-full text-purple-200 font-semibold border border-purple-500/30 text-sm sm:text-base">
-                {t('scene')} {current + 1} {t('of')} {scenes.length}
-              </span>
-              <button
-                onClick={resetStory}
-                className={`px-3 sm:px-4 py-1 sm:py-2 bg-gray-600/20 hover:bg-gray-500/30 rounded-full text-gray-300 hover:text-white transition-all duration-300 flex items-center gap-2 border border-gray-500/30 text-sm sm:text-base ${isMobile ? 'active:scale-95' : ''}`}
-              >
-                <RotateCcw size={14} />
-                {t('newStory')}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      </footer>
 
       <style jsx>{`
         .slider-thumb::-webkit-slider-thumb {
