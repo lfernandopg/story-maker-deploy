@@ -208,6 +208,7 @@ export default function App() {
   const onLoadedMetadata = () => setDuration(audioRef.current.duration);
 
   return (
+    <>
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black flex flex-col items-center justify-center text-white font-sans p-3 sm:p-6 relative overflow-hidden">
       {/* Efectos de fondo animados estilo cine */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(30,30,30,0.8),transparent_70%)] animate-pulse-slow" />
@@ -328,6 +329,10 @@ export default function App() {
                   </>
                 )}
               </button>
+              <div className="p-3 bg-yellow-900/30 border border-yellow-600/40 rounded-lg text-yellow-300 text-sm flex items-center gap-2">
+                <AlertCircle size={16} className="text-yellow-400 flex-shrink-0" />
+                <span>{t('loadingMessage')}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -450,5 +455,10 @@ export default function App() {
         .animate-pulse-slow { animation: pulse-slow 4s ease-in-out infinite; }
       `}</style>
     </div>
+        <footer className="mt-10 text-center text-gray-500 text-xs sm:text-sm opacity-70">
+      <p>© {new Date().getFullYear()} StoryMaker AI · {t('appSubtitle')}</p>
+      <p className="mt-1">Creado con ❤️ usando React & IA</p>
+    </footer>
+    </>
   );
 }
