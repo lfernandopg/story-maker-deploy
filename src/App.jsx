@@ -523,7 +523,7 @@ export default function App() {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-center sm:text-left">
               <p className="text-gray-400 text-sm">
-                {t('footerText')} <span className="text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text font-semibold">Luis Fernando</span>
+                {t('footerText')} <span className="text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text font-semibold">Luis Fernando Peña</span>
               </p>
               <p className="text-gray-500 text-xs mt-1">{t('footerSubtext')}</p>
             </div>
