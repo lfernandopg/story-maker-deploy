@@ -41,8 +41,8 @@ export default function AudioPlayer({ isPlaying, onPlayPause, progress, duration
               className="w-full h-2 bg-white/20 rounded-full appearance-none cursor-pointer slider-thumb"
             />
             <div 
-              className="absolute top-2 left-0 h-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full pointer-events-none transition-all duration-300"
-              style={{ width: `${(progress / (duration || 1)) * 97}%` }}
+              className="absolute top-0 left-0 h-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full pointer-events-none transition-all duration-300"
+              style={{ width: `${(progress / (duration || 1)) * 100}%` }}
             />
           </div>
           
