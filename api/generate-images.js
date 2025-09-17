@@ -38,24 +38,16 @@ export default async function handler(req, res) {
       try {
         console.log(`🎨 Generando imagen ${globalIndex + 1}/${imagePrompts.length}`);
         
-        // Timeout para evitar que la función serverless se cuelgue
-        const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout generando imagen')), 25000) // 25s timeout
-        );
-
         // Mejorar el prompt para mejores resultados
         const enhancedPrompt = `Create an image with aspect ratio 16:9 of ${currentBatch[i]}, high quality, detailed, cinematic, digital art, fantasy art style, vibrant colors, professional artwork`;
         
-        const generationPromise = ai.models.generateContent({
+        const response = await ai.models.generateContent({
           model: "gemini-2.0-flash-exp",
           contents: enhancedPrompt,
           config: {
             responseModalities: ['Text', 'Image']
           }
         });
-
-        // Usar Promise.race para timeout
-        const response = await Promise.race([generationPromise, timeoutPromise]);
         
         console.log(`✅ Imagen ${globalIndex + 1} generada con éxito`);
         
@@ -75,11 +67,6 @@ export default async function handler(req, res) {
           prompt: currentBatch[i],
           success: true
         });
-
-        // Pausa más corta entre requests para optimizar tiempo total
-        if (i < currentBatch.length - 1) {
-          await new Promise(resolve => setTimeout(resolve, 500)); // Reducido de 1000ms a 500ms
-        }
 
       } catch (imageError) {
         console.error(`❌ Error generando imagen ${globalIndex + 1}:`, imageError);
