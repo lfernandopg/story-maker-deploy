@@ -1,4 +1,6 @@
 import Replicate from 'replicate';
+import fetch from 'node-fetch'; // Asegúrate de tener node-fetch instalado
+import { Buffer } from 'buffer';
 
 export default async function handler(req, res) {
   // Only allow POST method
@@ -58,8 +60,17 @@ export default async function handler(req, res) {
           throw new Error('No image data found in response');
         }
         
+        // Descargar la imagen y convertirla a base64
         const imageUrl = output[0];
-        imageUrls.push(imageUrl);
+        const response = await fetch(imageUrl);
+        if (!response.ok) {
+          throw new Error('Error al descargar la imagen');
+        }
+        const imageBuffer = await response.buffer();
+        const base64 = imageBuffer.toString('base64');
+        const base64Url = `data:image/png;base64,${base64}`;
+        
+        imageUrls.push(base64Url);
         results.push({
           sceneIndex: globalIndex + 1,
           prompt: currentBatch[i],
