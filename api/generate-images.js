@@ -1,5 +1,4 @@
-// api/generate-images.js
-import { GoogleGenAI } from '@google/genai';
+import Replicate from 'replicate';
 
 export default async function handler(req, res) {
   // Only allow POST method
@@ -8,13 +7,13 @@ export default async function handler(req, res) {
   }
 
   try {
-    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+    const REPLICATE_API_TOKEN = process.env.REPLICATE_API_TOKEN;
     
-    if (!GEMINI_API_KEY) {
-      throw new Error('GEMINI_API_KEY no está configurado');
+    if (!REPLICATE_API_TOKEN) {
+      throw new Error('REPLICATE_API_TOKEN no está configurado');
     }
 
-    const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+    const replicate = new Replicate({ auth: REPLICATE_API_TOKEN });
     
     const { imagePrompts, currentIndex = 0, batchSize = 1 } = req.body;
 
@@ -31,7 +30,7 @@ export default async function handler(req, res) {
     const imageUrls = [];
     const results = [];
 
-    // Generar imágenes secuencialmente con timeouts optimizados
+    // Generar imágenes secuencialmente
     for (let i = 0; i < currentBatch.length; i++) {
       const globalIndex = currentIndex + i;
       
@@ -39,28 +38,27 @@ export default async function handler(req, res) {
         console.log(`🎨 Generando imagen ${globalIndex + 1}/${imagePrompts.length}`);
         
         // Mejorar el prompt para mejores resultados
-        const enhancedPrompt = `Create an image with aspect ratio 16:9 of ${currentBatch[i]}, high quality, detailed, cinematic, digital art, fantasy art style, vibrant colors, professional artwork`;
+        const enhancedPrompt = `Create an image of ${currentBatch[i]}, high quality, detailed, cinematic, digital art, fantasy art style, vibrant colors, professional artwork`;
         
-        const response = await ai.models.generateContent({
-          model: "gemini-2.0-flash-exp",
-          contents: enhancedPrompt,
-          config: {
-            responseModalities: ['Text', 'Image']
+        const output = await replicate.run(
+          "black-forest-labs/flux-schnell",
+          {
+            input: {
+              prompt: enhancedPrompt,
+              aspect_ratio: "16:9",
+              output_format: "png"
+            }
           }
-        });
+        );
         
         console.log(`✅ Imagen ${globalIndex + 1} generada con éxito`);
         
-        // Extraer la imagen de la respuesta
-        const imagePart = response.candidates[0].content.parts.find(p => p.inlineData);
-        if (!imagePart) {
+        // La respuesta de Replicate es un array de URLs
+        if (!output || !Array.isArray(output) || output.length === 0) {
           throw new Error('No image data found in response');
         }
         
-        // Crear URL base64 para respuesta inmediata
-        const base64 = imagePart.inlineData.data;
-        const imageUrl = `data:image/png;base64,${base64}`;
-        
+        const imageUrl = output[0];
         imageUrls.push(imageUrl);
         results.push({
           sceneIndex: globalIndex + 1,
