@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Play, RotateCcw, Sparkles, BookOpen, Headphones, AlertCircle, Globe, ChevronDown, Github, Linkedin, Mail, ArrowLeft, Zap, Palette, Mic, Smartphone, Languages, Code, Layers, User, Lightbulb, Rocket } from 'lucide-react';
 import SceneCard from './components/SceneCard';
@@ -89,77 +90,6 @@ export default function App() {
     }
   }, [current, scenes, storyReady, playAudio]);
 
-  // Función optimizada para generar imágenes secuencialmente
-  const generateImagesSequentially = async (imagePrompts) => {
-    const allImages = [];
-    const allResults = [];
-    
-    // Procesar una imagen a la vez para optimizar recursos
-    for (let i = 0; i < imagePrompts.length; i++) {
-      try {
-        // Actualizar estado de carga con progreso específico
-        setLoadingStep(`${t('creatingImages')} (${i + 1}/${imagePrompts.length})`);
-        
-        const imagesResponse = await fetch('/api/generate-images', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ 
-            imagePrompts: [imagePrompts[i]], // Solo enviar una imagen por request
-            currentIndex: i,
-            batchSize: 1
-          }),
-        });
-
-        if (!imagesResponse.ok) {
-          const errorData = await imagesResponse.json();
-          throw new Error(errorData.error || `Error generando imagen ${i + 1}`);
-        }
-
-        const imagesData = await imagesResponse.json();
-        
-        // Agregar imagen generada al array total
-        if (imagesData.images && imagesData.images.length > 0) {
-          allImages.push(imagesData.images[0]);
-          if (imagesData.results && imagesData.results.length > 0) {
-            allResults.push(imagesData.results[0]);
-          }
-        }
-        
-        // Pequeña pausa entre requests para evitar sobrecarga
-        if (i < imagePrompts.length - 1) {
-          await new Promise(resolve => setTimeout(resolve, 200));
-        }
-        
-      } catch (error) {
-        console.error(`Error generando imagen ${i + 1}:`, error);
-        
-        // Agregar placeholder en caso de error
-        const placeholderUrl = `https://picsum.photos/768/432?random=${Date.now()}-${i}`;
-        allImages.push(placeholderUrl);
-        allResults.push({
-          sceneIndex: i + 1,
-          prompt: imagePrompts[i],
-          error: error.message,
-          placeholder: placeholderUrl,
-          success: false
-        });
-      }
-    }
-    
-    return {
-      images: allImages,
-      results: allResults,
-      metadata: {
-        total: imagePrompts.length,
-        successful: allResults.filter(r => r.success).length,
-        failed: allResults.filter(r => !r.success).length,
-        timestamp: new Date().toISOString()
-      }
-    };
-  };
-
   const handleGenerate = async () => {
     if (!genre || !description) {
       setError(t('fieldsRequired'));
@@ -192,9 +122,24 @@ export default function App() {
 
       const storyData = await storyResponse.json();
       
-      // Paso 2: Generar imágenes secuencialmente (OPTIMIZADO)
+      // Paso 2: Generar imágenes
+      setLoadingStep(t('creatingImages'));
       const imagePrompts = storyData.scenes.map(scene => scene.imagePrompt);
-      const imagesData = await generateImagesSequentially(imagePrompts);
+      
+      const imagesResponse = await fetch('/api/generate-images', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ imagePrompts }),
+      });
+
+      if (!imagesResponse.ok) {
+        const errorData = await imagesResponse.json();
+        throw new Error(errorData.error || t('storyGenerationError'));
+      }
+
+      const imagesData = await imagesResponse.json();
 
       // Paso 3: Generar audios
       setLoadingStep(t('recordingNarration'));
@@ -357,67 +302,28 @@ export default function App() {
     </div>
   );
 
-  // Componente de loading screen con progreso detallado
-  const renderLoadingScreen = () => {
-    // Calcular progreso basado en el paso actual
-    const getProgress = () => {
-      if (loadingStep.includes(t('generatingStory'))) return 20;
-      if (loadingStep.includes(t('creatingImages'))) {
-        // Extraer números del string si existe (ej: "Creando imágenes (2/5)")
-        const match = loadingStep.match(/\((\d+)\/(\d+)\)/);
-        if (match) {
-          const current = parseInt(match[1]);
-          const total = parseInt(match[2]);
-          return 20 + Math.round((current / total) * 60); // 20% inicial + 60% para imágenes
-        }
-        return 40;
-      }
-      if (loadingStep.includes(t('recordingNarration'))) return 95;
-      return 10;
-    };
-
-    const progressValue = getProgress();
-
-    return (
-      <div className="flex flex-col items-center justify-center space-y-6 animate-fade-in px-4">
-        <div className="relative">
-          <div className="w-16 sm:w-20 h-16 sm:h-20 border-4 border-purple-500/30 border-t-purple-400 rounded-full animate-spin" />
-          <div className="absolute inset-0 w-16 sm:w-20 h-16 sm:h-20 border-4 border-pink-500/30 border-b-pink-400 rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
-        </div>
-        
-        <div className="text-center space-y-4 max-w-md">
-          <p className="text-lg sm:text-xl font-semibold text-purple-300 animate-pulse">
-            ✨ {loadingStep}
+  const renderLoadingScreen = () => (
+    <div className="flex flex-col items-center justify-center space-y-6 animate-fade-in px-4">
+      <div className="relative">
+        <div className="w-16 sm:w-20 h-16 sm:h-20 border-4 border-purple-500/30 border-t-purple-400 rounded-full animate-spin" />
+        <div className="absolute inset-0 w-16 sm:w-20 h-16 sm:h-20 border-4 border-pink-500/30 border-b-pink-400 rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
+      </div>
+      
+      <div className="text-center space-y-4 max-w-md">
+        <p className="text-lg sm:text-xl font-semibold text-purple-300 animate-pulse">
+          ✨ {loadingStep}
+        </p>
+        <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 border border-purple-500/20">
+          <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
+            {t('loadingMessage')}
           </p>
-          
-          {/* Barra de progreso */}
-          <div className="w-full bg-gray-800/60 rounded-full h-2 overflow-hidden">
-            <div 
-              className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-500 ease-out"
-              style={{ width: `${progressValue}%` }}
-            />
-          </div>
-          
-          <div className="flex items-center justify-between text-xs text-gray-400">
-            <span>0%</span>
-            <span className="text-purple-400 font-semibold">{progressValue}%</span>
-            <span>100%</span>
-          </div>
-          
-          <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 border border-purple-500/20">
-            <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
-              {t('loadingMessage')}
-            </p>
-            <p className="text-purple-400 text-xs sm:text-sm mt-2">
-              {progressValue < 30 && t('pleaseWait')}
-              {progressValue >= 30 && progressValue < 80 && "Generando imágenes mágicas..."}
-              {progressValue >= 80 && "¡Casi terminamos! Grabando narración..."}
-            </p>
-          </div>
+          <p className="text-purple-400 text-xs sm:text-sm mt-2">
+            {t('pleaseWait')}
+          </p>
         </div>
       </div>
-    );
-  };
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black flex flex-col text-white font-sans relative overflow-hidden">
@@ -618,7 +524,7 @@ export default function App() {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-center sm:text-left">
               <p className="text-gray-400 text-sm">
-                {t('footerText')} <span className="text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text font-semibold">Luis Fernando Peña</span>
+                {t('footerText')} <span className="text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text font-semibold">Luis Fernando</span>
               </p>
               <p className="text-gray-500 text-xs mt-1">{t('footerSubtext')}</p>
             </div>
@@ -634,7 +540,7 @@ export default function App() {
                 <Github size={20} />
               </a>
               <a 
-                href="https://www.linkedin.com/in/luiferpena/" 
+                href="https://linkedin.com/in/lfernandopg" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="p-2 text-gray-400 hover:text-purple-400 transition-colors duration-300 hover:scale-110"
@@ -643,7 +549,7 @@ export default function App() {
                 <Linkedin size={20} />
               </a>
               <a 
-                href="mailto:lfernandopg26@gmail.com"
+                href="mailto:lfernandopg@gmail.com"
                 className="p-2 text-gray-400 hover:text-purple-400 transition-colors duration-300 hover:scale-110"
                 aria-label={t('contact')}
               >
@@ -654,7 +560,7 @@ export default function App() {
           
           <div className="mt-4 pt-4 border-t border-gray-800/50 text-center">
             <p className="text-gray-500 text-xs">
-              © 2025 {t('appTitle')}. {t('footerRights')}.
+              © 2025 StoryMaker AI. {t('footerRights')}.
             </p>
           </div>
         </div>
