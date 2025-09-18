@@ -22,7 +22,7 @@ export const translations = {
     creatingImages: "Creando imágenes mágicas...",
     recordingNarration: "Grabando narración...",
     loadingMessage: "La magia está tomando forma. Cada historia única requiere tiempo para crear las imágenes perfectas y la narración envolvente que mereces.",
-    pleaseWait: "Por favor, mantén la paciencia mientras nuestros algoritmos trabajan...",
+    pleaseWait: "Por favor, ten paciencia mientras nuestros algoritmos trabajan...",
     
     // Story player
     adventureReady: "¡Tu aventura está lista para comenzar!",
